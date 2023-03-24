@@ -3,20 +3,29 @@ package com.example.springboot3migrationswithflyway.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Getter
+@Setter
+@ToString
+@Table(name="POST")
 public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
 
+    @NotNull(message="Title should not be empty")
+    @Column(columnDefinition = "TEXT", name = "TITLE")
     String title;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", name = "BODY")
     String body;
 
     LocalDateTime createdAt;
