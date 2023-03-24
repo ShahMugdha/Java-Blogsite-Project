@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,16 +15,16 @@ import com.example.springboot3migrationswithflyway.models.Account;
 import com.example.springboot3migrationswithflyway.models.Post;
 import com.example.springboot3migrationswithflyway.repository.AccountRepository;
 import com.example.springboot3migrationswithflyway.repository.PostRepository;
-import com.example.springboot3migrationswithflyway.request.PostRequest;
-import com.example.springboot3migrationswithflyway.service.PostService;
+import com.example.springboot3migrationswithflyway.request.AccountRequest;
+import com.example.springboot3migrationswithflyway.service.AccountService;
 
 import jakarta.validation.Valid;
 
 @RestController
-public class PostController {
+public class AccountController {
 
   @Autowired
-  private PostService pService;
+  private AccountService aService;
 
   @Autowired
   private PostRepository pRepository;
@@ -33,29 +32,31 @@ public class PostController {
   @Autowired
   private AccountRepository aRepository;
 
-  @GetMapping("/posts")
-  public List<Post> getPosts() {
-    return pService.getPosts();
+  //Get all users
+
+  @GetMapping("/account")
+  public List<Account> getAccounts() {
+    return aService.getAccounts();
   }
 
-  @GetMapping("/posts/{postID}")
-  public ResponseEntity<Post> getPostByID(@PathVariable("postID") Long id) {
-    return pService.getPostByID(id);
+  //create user account
+  @PostMapping("/account")
+  public ResponseEntity<Account> createAccount(@Valid @RequestBody AccountRequest aRequest) {
+    Account account = new Account(aRequest);
+    account = aRepository.save(account);
+    for(String s: aRequest.getPosts()) {
+      Post p = new Post();
+      p.setTitle(s);
+      p.setAccount(account);
+      pRepository.save(p);
+    }
+    return new ResponseEntity<Account>(aService.createAccount(account), HttpStatus.CREATED);
   }
 
-  @PostMapping("/posts")
-  public ResponseEntity<Post> createPost(@Valid @RequestBody Post post) {
-    return new ResponseEntity<Post>(pService.createPost(post), HttpStatus.CREATED) ;
-  }
-
-  @PutMapping("/posts/{postID}")
-  public ResponseEntity<Post> updatePost(@PathVariable("postID") Long id, @RequestBody Post post) {
-    post.setId(id);
-    return new ResponseEntity<Post>(pService.updatePost(id, post), HttpStatus.OK);
-  }
-
-  @DeleteMapping("/posts/{postID}")
-  public void deletePost(@PathVariable("postID") Long id) {
-    pService.deletePost(id);
+  //update user account
+  @PutMapping("/account/{accountID}")
+  public Account updateAccount(@PathVariable("accountID") Long id, @RequestBody Account account) {
+    account.setId(id);
+    return aService.updateAccount(id, account);
   }
 }

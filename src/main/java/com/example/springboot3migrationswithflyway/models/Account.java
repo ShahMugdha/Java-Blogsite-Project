@@ -9,9 +9,10 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import com.example.springboot3migrationswithflyway.request.AccountRequest;
+
 
 @Data
 @Entity
@@ -28,24 +29,16 @@ public class Account {
     @Email(message="please provide a valid email id")
     String email;
 
-    String password;
+    @NotNull(message="name is required")
+    String name;
 
-    @NotNull(message="First name is required")
-    String firstName;
+    LocalDateTime created_at;
 
-    String lastName;
-
-    LocalDateTime createdAt;
-
-    LocalDateTime updatedAt;
+    LocalDateTime updated_at;
 
     @OneToMany(mappedBy = "account")
     private List<Post> posts;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "account_authority",
-            joinColumns = {@JoinColumn(name = "account_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
-    private Set<Authority> authorities = new HashSet<>();
+    public Account(AccountRequest req) {
+        this.name = req.getName();
+    }
 }

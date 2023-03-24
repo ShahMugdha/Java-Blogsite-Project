@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.springboot3migrationswithflyway.models.Post;
@@ -26,9 +28,9 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public Post getPostByID(Long id) {
+  public ResponseEntity<Post> getPostByID(Long id) {
     Optional<Post> post=pRepository.findById(id);
-    if(post.isPresent()) return post.get();
+    if(post.isPresent()) return new ResponseEntity<Post>(post.get(), HttpStatus.OK);
     throw new RuntimeException("Post by this ID not found");
   }
 

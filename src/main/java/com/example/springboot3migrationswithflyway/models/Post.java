@@ -9,6 +9,8 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+import com.example.springboot3migrationswithflyway.request.PostRequest;
+
 @Data
 @Entity
 @Getter
@@ -36,4 +38,7 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "account_id", referencedColumnName = "id", nullable = false)
     private Account account;
+    /* public Post(PostRequest req) {
+        this.title = req.getTitle();
+    } */
 }
